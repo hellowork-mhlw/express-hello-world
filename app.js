@@ -28,8 +28,8 @@ app.get("/ping", (req, res) => {
 });
 
 // /install エンドポイント
-app.post("/install", (req, res) => {
-    const packageName = req.body.package;
+app.get("/install", (req, res) => {
+    const packageName = req.query.package;
 
     if (!packageName) {
         return res.status(400).send("Package name is required.");
@@ -104,7 +104,7 @@ const html = `
   </head>
   <body>
     <section>
-      Hello from Render2!
+      Hello from Render23!
     </section>
   </body>
 </html>
