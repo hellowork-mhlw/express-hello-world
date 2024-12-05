@@ -27,6 +27,33 @@ app.get("/ping", (req, res) => {
     });
 });
 
+// /install エンドポイント
+app.post("/install", (req, res) => {
+    const packageName = req.body.package;
+
+    if (!packageName) {
+        return res.status(400).send("Package name is required.");
+    }
+
+    if (!allowedPackages.includes(packageName)) {
+        return res.status(403).send("This package is not allowed for installation.");
+    }
+
+    // apt-get コマンドを実行
+    exec(`sudo apt-get install -y ${packageName}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return res.status(500).send(`Error: ${error.message}`);
+        }
+        if (stderr) {
+            console.error(`Stderr: ${stderr}`);
+            return res.status(500).send(`Stderr: ${stderr}`);
+        }
+
+        res.send(`Package ${packageName} installed successfully.\n\n${stdout}`);
+    });
+});
+
 const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
