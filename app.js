@@ -13,17 +13,7 @@ app.get("/ping", (req, res) => {
 
     // ping コマンドの実行
     exec(`ping -c 4 ${target}`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error: ${error.message}`);
-            return res.status(500).send(`Error: ${error.message}`);
-        }
-        if (stderr) {
-            console.error(`Stderr: ${stderr}`);
-            return res.status(500).send(`Stderr: ${stderr}`);
-        }
-
-        // 成功時のレスポンス
-        res.send(`<pre>${stdout}</pre>`);
+        return res.send(`Stderr: ${stderr} ${error?.message} ${stdout}`);
     });
 });
 
